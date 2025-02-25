@@ -23,6 +23,7 @@
       }
       .game-container {
         text-align: center;
+        margin-top: 310px; 
       }
       .instructions {
         max-width: 600px;
@@ -39,20 +40,36 @@
       .control-section {
         text-align: left;
       }
+      h1 {
+        font-size: 24px;
+      }
       h2 {
         color: #4caf50;
         margin-top: 0;
+      }
+      a {
+        color: #4caf50;
       }
     </style>
   </head>
   <body>
     <div class="game-container">
       <h1>Snake vs CPU</h1>
+      
+      <canvas id="gameCanvas" width="600" height="600"></canvas>
+
       <div class="instructions">
         <h2>How to Play</h2>
         <p>
           Race against the CPU snake to eat the red food. Each food eaten adds 1
           point. Be careful not to hit the walls, yourself, or the CPU snake!
+        </p>
+
+        <p>
+          <strong>Power-Ups:</strong>
+          <ul>
+            <li>Speed Boost: Increases snake speed for 2 seconds after eat food</li>
+          </ul>
         </p>
 
         <div class="controls">
@@ -73,9 +90,15 @@
             </ul>
           </div>
         </div>
+        <p>
+          <a href="https://github.com/saitodisse/snake-game-example"
+            >https://github.com/saitodisse/snake-game-example</a
+          >
+        </p>
+        <p>
+          developed with AI (Claude 3.5 Sonnet and Claude 3.7 Sonnet)
+        </p>
       </div>
-
-      <canvas id="gameCanvas" width="600" height="600"></canvas>
     </div>
 
     <script type="module">
