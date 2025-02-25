@@ -41,7 +41,7 @@ export default class UI {
     );
 
     // Draw pause indicator
-    if (this.game.paused && !this.game.gameOver && !this.game.roundOver) {
+    if (this.game.paused && !this.game.gameOver) {
       context.fillStyle = "rgba(0, 0, 0, 0.7)"; // Make background darker for better visibility
       context.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
 
@@ -59,52 +59,6 @@ export default class UI {
         this.game.canvas.width / 2,
         this.game.canvas.height / 2 + 40
       );
-      context.textAlign = "left";
-    }
-
-    // Draw round over screen
-    if (this.game.roundOver && !this.game.gameOver) {
-      context.fillStyle = "rgba(0, 0, 0, 0.7)";
-      context.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
-
-      context.font = "48px Arial";
-      context.fillStyle = "white";
-      context.textAlign = "center";
-      context.fillText(
-        "ROUND OVER",
-        this.game.canvas.width / 2,
-        this.game.canvas.height / 2 - 50
-      );
-
-      // Show who won the round
-      let resultText = "No winner";
-      if (this.game.roundWinner === "player") {
-        resultText = "Player won this round!";
-      } else if (this.game.roundWinner === "cpu") {
-        resultText = "CPU won this round!";
-      }
-
-      context.font = "36px Arial";
-      context.fillText(
-        resultText,
-        this.game.canvas.width / 2,
-        this.game.canvas.height / 2
-      );
-
-      // Score display
-      context.font = "24px Arial";
-      context.fillText(
-        `Player: ${this.game.playerScore} - CPU: ${this.game.cpuScore}`,
-        this.game.canvas.width / 2,
-        this.game.canvas.height / 2 + 40
-      );
-
-      context.fillText(
-        "Press Start/Enter for next round",
-        this.game.canvas.width / 2,
-        this.game.canvas.height / 2 + 80
-      );
-
       context.textAlign = "left";
     }
 

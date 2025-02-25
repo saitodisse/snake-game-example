@@ -19,7 +19,7 @@ export default class CPUSnake {
   }
 
   update(deltaTime) {
-    if (this.game.gameOver || this.game.paused || this.game.roundOver) return;
+    if (this.game.gameOver || this.game.paused) return;
 
     this.movementTimer += deltaTime;
 
@@ -49,7 +49,7 @@ export default class CPUSnake {
         head.y >= this.game.canvas.height
       ) {
         this.game.soundManager.play("collision");
-        this.game.endRound("player");
+        this.game.endGame("player");
         return;
       }
 
@@ -57,7 +57,7 @@ export default class CPUSnake {
       for (let i = 0; i < this.segments.length; i++) {
         if (head.x === this.segments[i].x && head.y === this.segments[i].y) {
           this.game.soundManager.play("collision");
-          this.game.endRound("player");
+          this.game.endGame("player");
           return;
         }
       }
@@ -70,7 +70,7 @@ export default class CPUSnake {
         for (const segment of playerSnake.segments) {
           if (head.x === segment.x && head.y === segment.y) {
             this.game.soundManager.play("collision");
-            this.game.endRound("player");
+            this.game.endGame("player");
             return;
           }
         }

@@ -30,13 +30,6 @@ export default class Snake {
       return;
     }
 
-    if (this.game.roundOver) {
-      if (event.key === "Enter") {
-        this.game.startNewRound();
-      }
-      return;
-    }
-
     switch (event.key) {
       case "ArrowUp":
         if (this.direction.y !== 1) this.nextDirection = { x: 0, y: -1 };
@@ -64,15 +57,15 @@ export default class Snake {
         break;
 
       case "Enter":
-        // Toggle pause when Enter/Start is pressed if not in round over state
-        if (!this.game.roundOver) {
+        // Toggle pause when Enter/Start is pressed
+        if (!this.game.gameOver) {
           this.game.paused = !this.game.paused;
           if (this.game.paused) {
             this.game.soundManager.play("pause");
           }
           console.log("Game paused:", this.game.paused); // Debug log
         } else {
-          this.game.startNewRound();
+          this.game.restart();
         }
         break;
       case "m":
@@ -83,7 +76,7 @@ export default class Snake {
   }
 
   update(deltaTime) {
-    if (this.game.gameOver || this.game.paused || this.game.roundOver) return;
+    if (this.game.gameOver || this.game.paused) return;
 
     this.movementTimer += deltaTime;
 
@@ -107,7 +100,7 @@ export default class Snake {
         head.y >= this.game.canvas.height
       ) {
         this.game.soundManager.play("collision");
-        this.game.endRound("cpu");
+        this.game.endGame("cpu");
         return;
       }
 
@@ -115,7 +108,7 @@ export default class Snake {
       for (let i = 0; i < this.segments.length; i++) {
         if (head.x === this.segments[i].x && head.y === this.segments[i].y) {
           this.game.soundManager.play("collision");
-          this.game.endRound("cpu");
+          this.game.endGame("cpu");
           return;
         }
       }
@@ -128,7 +121,7 @@ export default class Snake {
         for (const segment of cpuSnake.segments) {
           if (head.x === segment.x && head.y === segment.y) {
             this.game.soundManager.play("collision");
-            this.game.endRound("cpu");
+            this.game.endGame("cpu");
             return;
           }
         }

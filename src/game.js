@@ -19,11 +19,9 @@ export default class Game {
     // Game state
     this.paused = false;
     this.gameOver = false;
-    this.roundOver = false;
     this.playerScore = 0;
     this.cpuScore = 0;
     this.winningScore = 10;
-    this.roundWinner = null;
     this.gameWinner = null;
     
     // Adicionar estados para o power-up de velocidade
@@ -100,12 +98,11 @@ export default class Game {
     }
 
     // Only update game objects if not paused
-    if (!this.paused || this.gameOver || this.roundOver) {
+    if (!this.paused || this.gameOver) {
       this.gameObjects.forEach((object) => {
         if (
           object.constructor.name === "UI" ||
           this.gameOver ||
-          this.roundOver ||
           !this.paused
         ) {
           object.update(deltaTime);
@@ -131,50 +128,24 @@ export default class Game {
     requestAnimationFrame(this.gameLoop.bind(this));
   }
 
-  endRound(winner) {
-    this.roundOver = true;
-    this.roundWinner = winner;
+  endGame(winner) {
+    this.gameOver = true;
+    this.gameWinner = winner;
 
     // Play appropriate sounds
     if (winner === "player") {
-      this.soundManager.play("roundWin");
+      this.soundManager.play("gameOver-happy");
     } else if (winner === "cpu") {
-      this.soundManager.play("roundLose");
+      this.soundManager.play("gameOver-sad");
     }
-  }
-
-  startNewRound() {
-    console.log("Starting new round");
-    this.roundOver = false;
-    this.roundWinner = null;
-
-    // Play menu select sound
-    this.soundManager.play("menuSelect");
-
-    // Reset all game objects but keep scores
-    const snake = this.gameObjects.find(
-      (obj) => obj.constructor.name === "Snake"
-    );
-    const cpuSnake = this.gameObjects.find(
-      (obj) => obj.constructor.name === "CPUSnake"
-    );
-    const food = this.gameObjects.find(
-      (obj) => obj.constructor.name === "Food"
-    );
-
-    if (snake) snake.reset();
-    if (cpuSnake) cpuSnake.reset();
-    if (food) food.relocate();
   }
 
   restart() {
     console.log("Restarting game");
     this.gameOver = false;
-    this.roundOver = false;
     this.paused = false;
     this.playerScore = 0;
     this.cpuScore = 0;
-    this.roundWinner = null;
     this.gameWinner = null;
 
     // Play game start sound
