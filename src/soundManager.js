@@ -8,9 +8,10 @@ export default class SoundManager {
 
   loadSounds() {
     // Define all the sounds used in the game
-    this.load("eat", "assets/sounds/coins_clinking.wav");
-    this.load("collision", "assets/sounds/smack.wav");
-    this.load("gameOver", "assets/sounds/oh_no.wav");
+    this.load("eat", "assets/sounds/smack.wav");
+    this.load("collision", "assets/sounds/incorrect_sfx.wav");
+    this.load("gameOver-happy", "assets/sounds/crowd_cheer_sfx.wav");
+    this.load("gameOver-sad", "assets/sounds/oh_no.wav");
     this.load("roundWin", "assets/sounds/victory_confetti.wav");
     this.load("roundLose", "assets/sounds/windowBreak.wav");
     this.load("pause", "assets/sounds/donk.wav");

@@ -51,13 +51,13 @@ export default class Game {
     // Check for winner
     if (this.playerScore >= this.winningScore) {
       if (!this.gameOver) {
-        this.soundManager.play("gameOver");
+        this.soundManager.play("gameOver-happy");
       }
       this.gameOver = true;
       this.gameWinner = "player";
     } else if (this.cpuScore >= this.winningScore) {
       if (!this.gameOver) {
-        this.soundManager.play("gameOver");
+        this.soundManager.play("gameOver-sad");
       }
       this.gameOver = true;
       this.gameWinner = "cpu";
