@@ -46,6 +46,7 @@ export default class CPUSnake {
         head.y < 0 ||
         head.y >= this.game.canvas.height
       ) {
+        this.game.soundManager.play("collision");
         this.game.endRound("player");
         return;
       }
@@ -53,6 +54,7 @@ export default class CPUSnake {
       // Check for self-collision
       for (let i = 0; i < this.segments.length; i++) {
         if (head.x === this.segments[i].x && head.y === this.segments[i].y) {
+          this.game.soundManager.play("collision");
           this.game.endRound("player");
           return;
         }
@@ -65,6 +67,7 @@ export default class CPUSnake {
       if (playerSnake) {
         for (const segment of playerSnake.segments) {
           if (head.x === segment.x && head.y === segment.y) {
+            this.game.soundManager.play("collision");
             this.game.endRound("player");
             return;
           }
@@ -77,6 +80,7 @@ export default class CPUSnake {
       // Check if snake ate food
       if (food && head.x === food.position.x && head.y === food.position.y) {
         this.game.cpuScore++;
+        this.game.soundManager.play("eat");
         food.relocate();
       } else {
         // Remove tail if no food was eaten

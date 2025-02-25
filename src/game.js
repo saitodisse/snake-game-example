@@ -3,6 +3,7 @@ import Snake from "./snake.js";
 import CPUSnake from "./cpuSnake.js";
 import Food from "./food.js";
 import UI from "./ui.js";
+import SoundManager from "./soundManager.js";
 
 export default class Game {
   constructor(canvasId) {
@@ -11,6 +12,9 @@ export default class Game {
     this.gamepadController = new GamepadController(this);
     this.lastTime = 0;
     this.gameObjects = [];
+
+    // Initialize sound manager
+    this.soundManager = new SoundManager();
 
     // Game state
     this.paused = false;
@@ -36,6 +40,9 @@ export default class Game {
     this.gameObjects.push(cpuSnake);
     this.gameObjects.push(food);
     this.gameObjects.push(ui);
+
+    // Play game start sound
+    this.soundManager.play("gameStart");
   }
 
   update(deltaTime) {
@@ -43,9 +50,15 @@ export default class Game {
 
     // Check for winner
     if (this.playerScore >= this.winningScore) {
+      if (!this.gameOver) {
+        this.soundManager.play("gameOver");
+      }
       this.gameOver = true;
       this.gameWinner = "player";
     } else if (this.cpuScore >= this.winningScore) {
+      if (!this.gameOver) {
+        this.soundManager.play("gameOver");
+      }
       this.gameOver = true;
       this.gameWinner = "cpu";
     }
@@ -85,12 +98,22 @@ export default class Game {
   endRound(winner) {
     this.roundOver = true;
     this.roundWinner = winner;
+
+    // Play appropriate sounds
+    if (winner === "player") {
+      this.soundManager.play("roundWin");
+    } else if (winner === "cpu") {
+      this.soundManager.play("roundLose");
+    }
   }
 
   startNewRound() {
     console.log("Starting new round");
     this.roundOver = false;
     this.roundWinner = null;
+
+    // Play menu select sound
+    this.soundManager.play("menuSelect");
 
     // Reset all game objects but keep scores
     const snake = this.gameObjects.find(
@@ -118,6 +141,9 @@ export default class Game {
     this.roundWinner = null;
     this.gameWinner = null;
 
+    // Play game start sound
+    this.soundManager.play("gameStart");
+
     // Reset all game objects
     const snake = this.gameObjects.find(
       (obj) => obj.constructor.name === "Snake"
@@ -132,5 +158,9 @@ export default class Game {
     if (snake) snake.reset();
     if (cpuSnake) cpuSnake.reset();
     if (food) food.relocate();
+  }
+
+  toggleSound() {
+    return this.soundManager.toggleMute();
   }
 }

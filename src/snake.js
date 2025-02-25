@@ -52,10 +52,17 @@ export default class Snake {
         // Toggle pause when Enter/Start is pressed if not in round over state
         if (!this.game.roundOver) {
           this.game.paused = !this.game.paused;
+          if (this.game.paused) {
+            this.game.soundManager.play("pause");
+          }
           console.log("Game paused:", this.game.paused); // Debug log
         } else {
           this.game.startNewRound();
         }
+        break;
+      case "m":
+        // Toggle sound mute
+        this.game.toggleSound();
         break;
     }
   }
@@ -84,6 +91,7 @@ export default class Snake {
         head.y < 0 ||
         head.y >= this.game.canvas.height
       ) {
+        this.game.soundManager.play("collision");
         this.game.endRound("cpu");
         return;
       }
@@ -91,6 +99,7 @@ export default class Snake {
       // Check for self-collision
       for (let i = 0; i < this.segments.length; i++) {
         if (head.x === this.segments[i].x && head.y === this.segments[i].y) {
+          this.game.soundManager.play("collision");
           this.game.endRound("cpu");
           return;
         }
@@ -103,6 +112,7 @@ export default class Snake {
       if (cpuSnake) {
         for (const segment of cpuSnake.segments) {
           if (head.x === segment.x && head.y === segment.y) {
+            this.game.soundManager.play("collision");
             this.game.endRound("cpu");
             return;
           }
@@ -118,6 +128,7 @@ export default class Snake {
       );
       if (food && head.x === food.position.x && head.y === food.position.y) {
         this.game.playerScore++;
+        this.game.soundManager.play("eat");
         food.relocate();
       } else {
         // Remove tail if no food was eaten

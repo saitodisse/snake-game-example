@@ -28,6 +28,18 @@ export default class UI {
       30
     );
 
+    // Sound status indicator
+    context.font = "16px Arial";
+    context.fillStyle = "black";
+    const soundText = this.game.soundManager.isMuted()
+      ? "🔇 Muted (M)"
+      : "🔊 Sound On (M)";
+    context.fillText(
+      soundText,
+      this.game.canvas.width - 120,
+      this.game.canvas.height - 20
+    );
+
     // Draw pause indicator
     if (this.game.paused && !this.game.gameOver && !this.game.roundOver) {
       context.fillStyle = "rgba(0, 0, 0, 0.7)"; // Make background darker for better visibility
