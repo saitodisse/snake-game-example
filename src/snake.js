@@ -48,6 +48,19 @@ export default class Snake {
       case "ArrowRight":
         if (this.direction.x !== -1) this.nextDirection = { x: 1, y: 0 };
         break;
+      case "w":
+        if (this.direction.y !== 1) this.nextDirection = { x: 0, y: -1 };
+        break;
+      case "s":
+        if (this.direction.y !== -1) this.nextDirection = { x: 0, y: 1 };
+        break;
+      case "a":
+        if (this.direction.x !== 1) this.nextDirection = { x: -1, y: 0 };
+        break;
+      case "d":
+        if (this.direction.x !== -1) this.nextDirection = { x: 1, y: 0 };
+        break;
+
       case "Enter":
         // Toggle pause when Enter/Start is pressed if not in round over state
         if (!this.game.roundOver) {
