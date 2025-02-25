@@ -24,56 +24,66 @@ export default class GamepadController {
       );
 
       if (snake) {
-        // D-pad controls
-        if (this.gamepad.buttons[12].pressed && snake.direction.y !== 1) {
-          snake.nextDirection = { x: 0, y: -1 }; // Up
-        } else if (
-          this.gamepad.buttons[13].pressed &&
-          snake.direction.y !== -1
-        ) {
-          snake.nextDirection = { x: 0, y: 1 }; // Down
-        } else if (
-          this.gamepad.buttons[14].pressed &&
-          snake.direction.x !== 1
-        ) {
-          snake.nextDirection = { x: -1, y: 0 }; // Left
-        } else if (
-          this.gamepad.buttons[15].pressed &&
-          snake.direction.x !== -1
-        ) {
-          snake.nextDirection = { x: 1, y: 0 }; // Right
-        }
+        // D-pad controls (only when game is active)
+        if (!this.game.paused && !this.game.gameOver && !this.game.roundOver) {
+          if (this.gamepad.buttons[12].pressed && snake.direction.y !== 1) {
+            snake.nextDirection = { x: 0, y: -1 }; // Up
+          } else if (
+            this.gamepad.buttons[13].pressed &&
+            snake.direction.y !== -1
+          ) {
+            snake.nextDirection = { x: 0, y: 1 }; // Down
+          } else if (
+            this.gamepad.buttons[14].pressed &&
+            snake.direction.x !== 1
+          ) {
+            snake.nextDirection = { x: -1, y: 0 }; // Left
+          } else if (
+            this.gamepad.buttons[15].pressed &&
+            snake.direction.x !== -1
+          ) {
+            snake.nextDirection = { x: 1, y: 0 }; // Right
+          }
 
-        // Analog stick controls
-        const threshold = 0.5;
-        if (
-          Math.abs(this.gamepad.axes[0]) > threshold ||
-          Math.abs(this.gamepad.axes[1]) > threshold
-        ) {
-          if (Math.abs(this.gamepad.axes[0]) > Math.abs(this.gamepad.axes[1])) {
-            // Horizontal movement is stronger
-            if (this.gamepad.axes[0] < -threshold && snake.direction.x !== 1) {
-              snake.nextDirection = { x: -1, y: 0 }; // Left
-            } else if (
-              this.gamepad.axes[0] > threshold &&
-              snake.direction.x !== -1
+          // Analog stick controls
+          const threshold = 0.5;
+          if (
+            Math.abs(this.gamepad.axes[0]) > threshold ||
+            Math.abs(this.gamepad.axes[1]) > threshold
+          ) {
+            if (
+              Math.abs(this.gamepad.axes[0]) > Math.abs(this.gamepad.axes[1])
             ) {
-              snake.nextDirection = { x: 1, y: 0 }; // Right
-            }
-          } else {
-            // Vertical movement is stronger
-            if (this.gamepad.axes[1] < -threshold && snake.direction.y !== 1) {
-              snake.nextDirection = { x: 0, y: -1 }; // Up
-            } else if (
-              this.gamepad.axes[1] > threshold &&
-              snake.direction.y !== -1
-            ) {
-              snake.nextDirection = { x: 0, y: 1 }; // Down
+              // Horizontal movement is stronger
+              if (
+                this.gamepad.axes[0] < -threshold &&
+                snake.direction.x !== 1
+              ) {
+                snake.nextDirection = { x: -1, y: 0 }; // Left
+              } else if (
+                this.gamepad.axes[0] > threshold &&
+                snake.direction.x !== -1
+              ) {
+                snake.nextDirection = { x: 1, y: 0 }; // Right
+              }
+            } else {
+              // Vertical movement is stronger
+              if (
+                this.gamepad.axes[1] < -threshold &&
+                snake.direction.y !== 1
+              ) {
+                snake.nextDirection = { x: 0, y: -1 }; // Up
+              } else if (
+                this.gamepad.axes[1] > threshold &&
+                snake.direction.y !== -1
+              ) {
+                snake.nextDirection = { x: 0, y: 1 }; // Down
+              }
             }
           }
         }
 
-        // Start button for pause/restart
+        // Start button for pause/restart/next round
         // Button 9 is typically the "start" button
         if (
           this.gamepad.buttons[9].pressed &&
@@ -86,6 +96,9 @@ export default class GamepadController {
           if (this.game.gameOver) {
             this.game.restart();
             console.log("Game restarted via gamepad");
+          } else if (this.game.roundOver) {
+            this.game.startNewRound();
+            console.log("New round started via gamepad");
           } else {
             this.game.paused = !this.game.paused;
             console.log("Game paused via gamepad:", this.game.paused);

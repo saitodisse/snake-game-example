@@ -15,8 +15,12 @@ export default class Game {
     // Game state
     this.paused = false;
     this.gameOver = false;
+    this.roundOver = false;
     this.playerScore = 0;
     this.cpuScore = 0;
+    this.winningScore = 10;
+    this.roundWinner = null;
+    this.gameWinner = null;
 
     this.init();
   }
@@ -37,10 +41,24 @@ export default class Game {
   update(deltaTime) {
     this.gamepadController.update(deltaTime); // Pass deltaTime to gamepadController
 
+    // Check for winner
+    if (this.playerScore >= this.winningScore) {
+      this.gameOver = true;
+      this.gameWinner = "player";
+    } else if (this.cpuScore >= this.winningScore) {
+      this.gameOver = true;
+      this.gameWinner = "cpu";
+    }
+
     // Only update game objects if not paused
-    if (!this.paused || this.gameOver) {
+    if (!this.paused || this.gameOver || this.roundOver) {
       this.gameObjects.forEach((object) => {
-        if (object.constructor.name === "UI" || this.gameOver || !this.paused) {
+        if (
+          object.constructor.name === "UI" ||
+          this.gameOver ||
+          this.roundOver ||
+          !this.paused
+        ) {
           object.update(deltaTime);
         }
       });
@@ -64,12 +82,41 @@ export default class Game {
     requestAnimationFrame(this.gameLoop.bind(this));
   }
 
+  endRound(winner) {
+    this.roundOver = true;
+    this.roundWinner = winner;
+  }
+
+  startNewRound() {
+    console.log("Starting new round");
+    this.roundOver = false;
+    this.roundWinner = null;
+
+    // Reset all game objects but keep scores
+    const snake = this.gameObjects.find(
+      (obj) => obj.constructor.name === "Snake"
+    );
+    const cpuSnake = this.gameObjects.find(
+      (obj) => obj.constructor.name === "CPUSnake"
+    );
+    const food = this.gameObjects.find(
+      (obj) => obj.constructor.name === "Food"
+    );
+
+    if (snake) snake.reset();
+    if (cpuSnake) cpuSnake.reset();
+    if (food) food.relocate();
+  }
+
   restart() {
     console.log("Restarting game");
     this.gameOver = false;
+    this.roundOver = false;
     this.paused = false;
     this.playerScore = 0;
     this.cpuScore = 0;
+    this.roundWinner = null;
+    this.gameWinner = null;
 
     // Reset all game objects
     const snake = this.gameObjects.find(

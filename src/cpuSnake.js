@@ -17,7 +17,7 @@ export default class CPUSnake {
   }
 
   update(deltaTime) {
-    if (this.game.gameOver || this.game.paused) return;
+    if (this.game.gameOver || this.game.paused || this.game.roundOver) return;
 
     this.movementTimer += deltaTime;
 
@@ -46,14 +46,14 @@ export default class CPUSnake {
         head.y < 0 ||
         head.y >= this.game.canvas.height
       ) {
-        this.game.gameOver = true;
+        this.game.endRound("player");
         return;
       }
 
       // Check for self-collision
       for (let i = 0; i < this.segments.length; i++) {
         if (head.x === this.segments[i].x && head.y === this.segments[i].y) {
-          this.game.gameOver = true;
+          this.game.endRound("player");
           return;
         }
       }
@@ -65,7 +65,7 @@ export default class CPUSnake {
       if (playerSnake) {
         for (const segment of playerSnake.segments) {
           if (head.x === segment.x && head.y === segment.y) {
-            this.game.gameOver = true;
+            this.game.endRound("player");
             return;
           }
         }

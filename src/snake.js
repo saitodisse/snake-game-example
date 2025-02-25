@@ -28,6 +28,13 @@ export default class Snake {
       return;
     }
 
+    if (this.game.roundOver) {
+      if (event.key === "Enter") {
+        this.game.startNewRound();
+      }
+      return;
+    }
+
     switch (event.key) {
       case "ArrowUp":
         if (this.direction.y !== 1) this.nextDirection = { x: 0, y: -1 };
@@ -42,15 +49,19 @@ export default class Snake {
         if (this.direction.x !== -1) this.nextDirection = { x: 1, y: 0 };
         break;
       case "Enter":
-        // Toggle pause when Enter/Start is pressed
-        this.game.paused = !this.game.paused;
-        console.log("Game paused:", this.game.paused); // Debug log
+        // Toggle pause when Enter/Start is pressed if not in round over state
+        if (!this.game.roundOver) {
+          this.game.paused = !this.game.paused;
+          console.log("Game paused:", this.game.paused); // Debug log
+        } else {
+          this.game.startNewRound();
+        }
         break;
     }
   }
 
   update(deltaTime) {
-    if (this.game.gameOver || this.game.paused) return;
+    if (this.game.gameOver || this.game.paused || this.game.roundOver) return;
 
     this.movementTimer += deltaTime;
 
@@ -73,14 +84,14 @@ export default class Snake {
         head.y < 0 ||
         head.y >= this.game.canvas.height
       ) {
-        this.game.gameOver = true;
+        this.game.endRound("cpu");
         return;
       }
 
       // Check for self-collision
       for (let i = 0; i < this.segments.length; i++) {
         if (head.x === this.segments[i].x && head.y === this.segments[i].y) {
-          this.game.gameOver = true;
+          this.game.endRound("cpu");
           return;
         }
       }
@@ -92,7 +103,7 @@ export default class Snake {
       if (cpuSnake) {
         for (const segment of cpuSnake.segments) {
           if (head.x === segment.x && head.y === segment.y) {
-            this.game.gameOver = true;
+            this.game.endRound("cpu");
             return;
           }
         }

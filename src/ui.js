@@ -14,18 +14,22 @@ export default class UI {
 
     // Player score
     context.fillStyle = "darkgreen";
-    context.fillText(`Player: ${this.game.playerScore}`, 20, 30);
+    context.fillText(
+      `Player: ${this.game.playerScore}/${this.game.winningScore}`,
+      20,
+      30
+    );
 
     // CPU score
     context.fillStyle = "darkblue";
     context.fillText(
-      `CPU: ${this.game.cpuScore}`,
-      this.game.canvas.width - 120,
+      `CPU: ${this.game.cpuScore}/${this.game.winningScore}`,
+      this.game.canvas.width - 160,
       30
     );
 
     // Draw pause indicator
-    if (this.game.paused && !this.game.gameOver) {
+    if (this.game.paused && !this.game.gameOver && !this.game.roundOver) {
       context.fillStyle = "rgba(0, 0, 0, 0.7)"; // Make background darker for better visibility
       context.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
 
@@ -46,8 +50,8 @@ export default class UI {
       context.textAlign = "left";
     }
 
-    // Draw game over screen
-    if (this.game.gameOver) {
+    // Draw round over screen
+    if (this.game.roundOver && !this.game.gameOver) {
       context.fillStyle = "rgba(0, 0, 0, 0.7)";
       context.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
 
@@ -55,17 +59,17 @@ export default class UI {
       context.fillStyle = "white";
       context.textAlign = "center";
       context.fillText(
-        "GAME OVER",
+        "ROUND OVER",
         this.game.canvas.width / 2,
         this.game.canvas.height / 2 - 50
       );
 
-      // Determine winner
-      let resultText = "It's a tie!";
-      if (this.game.playerScore > this.game.cpuScore) {
-        resultText = "Player wins!";
-      } else if (this.game.cpuScore > this.game.playerScore) {
-        resultText = "CPU wins!";
+      // Show who won the round
+      let resultText = "No winner";
+      if (this.game.roundWinner === "player") {
+        resultText = "Player won this round!";
+      } else if (this.game.roundWinner === "cpu") {
+        resultText = "CPU won this round!";
       }
 
       context.font = "36px Arial";
@@ -84,9 +88,62 @@ export default class UI {
       );
 
       context.fillText(
-        "Press Start/Enter to restart",
+        "Press Start/Enter for next round",
         this.game.canvas.width / 2,
         this.game.canvas.height / 2 + 80
+      );
+
+      context.textAlign = "left";
+    }
+
+    // Draw game over screen
+    if (this.game.gameOver) {
+      context.fillStyle = "rgba(0, 0, 0, 0.7)";
+      context.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+
+      context.font = "48px Arial";
+      context.fillStyle = "white";
+      context.textAlign = "center";
+      context.fillText(
+        "GAME OVER",
+        this.game.canvas.width / 2,
+        this.game.canvas.height / 2 - 80
+      );
+
+      // Determine winner
+      let resultText = "It's a tie!";
+      if (this.game.gameWinner === "player") {
+        resultText = "Player wins the game!";
+      } else if (this.game.gameWinner === "cpu") {
+        resultText = "CPU wins the game!";
+      }
+
+      context.font = "40px Arial";
+      context.fillText(
+        resultText,
+        this.game.canvas.width / 2,
+        this.game.canvas.height / 2 - 20
+      );
+
+      // Score display
+      context.font = "30px Arial";
+      context.fillText(
+        `Final Score: Player ${this.game.playerScore} - CPU ${this.game.cpuScore}`,
+        this.game.canvas.width / 2,
+        this.game.canvas.height / 2 + 30
+      );
+
+      context.font = "24px Arial";
+      context.fillText(
+        "First to 10 points wins!",
+        this.game.canvas.width / 2,
+        this.game.canvas.height / 2 + 70
+      );
+
+      context.fillText(
+        "Press Start/Enter to play again",
+        this.game.canvas.width / 2,
+        this.game.canvas.height / 2 + 110
       );
 
       context.textAlign = "left";
