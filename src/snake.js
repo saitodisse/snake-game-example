@@ -21,6 +21,13 @@ export default class Snake {
   }
 
   handleKeyDown(event) {
+    if (this.game.gameOver) {
+      if (event.key === "Enter") {
+        this.game.restart();
+      }
+      return;
+    }
+
     switch (event.key) {
       case "ArrowUp":
         if (this.direction.y !== 1) this.nextDirection = { x: 0, y: -1 };
@@ -34,10 +41,17 @@ export default class Snake {
       case "ArrowRight":
         if (this.direction.x !== -1) this.nextDirection = { x: 1, y: 0 };
         break;
+      case "Enter":
+        // Toggle pause when Enter/Start is pressed
+        this.game.paused = !this.game.paused;
+        console.log("Game paused:", this.game.paused); // Debug log
+        break;
     }
   }
 
   update(deltaTime) {
+    if (this.game.gameOver || this.game.paused) return;
+
     this.movementTimer += deltaTime;
 
     // Move the snake at fixed intervals
@@ -59,15 +73,28 @@ export default class Snake {
         head.y < 0 ||
         head.y >= this.game.canvas.height
       ) {
-        this.reset();
+        this.game.gameOver = true;
         return;
       }
 
       // Check for self-collision
       for (let i = 0; i < this.segments.length; i++) {
         if (head.x === this.segments[i].x && head.y === this.segments[i].y) {
-          this.reset();
+          this.game.gameOver = true;
           return;
+        }
+      }
+
+      // Check for collision with CPU snake
+      const cpuSnake = this.game.gameObjects.find(
+        (obj) => obj.constructor.name === "CPUSnake"
+      );
+      if (cpuSnake) {
+        for (const segment of cpuSnake.segments) {
+          if (head.x === segment.x && head.y === segment.y) {
+            this.game.gameOver = true;
+            return;
+          }
         }
       }
 
@@ -79,6 +106,7 @@ export default class Snake {
         (obj) => obj.constructor.name === "Food"
       );
       if (food && head.x === food.position.x && head.y === food.position.y) {
+        this.game.playerScore++;
         food.relocate();
       } else {
         // Remove tail if no food was eaten

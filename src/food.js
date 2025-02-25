@@ -17,19 +17,33 @@ export default class Food {
 
     this.position = { x, y };
 
-    // Make sure food doesn't appear on the snake
+    // Make sure food doesn't appear on any snake
     const snake = this.game.gameObjects.find(
       (obj) => obj.constructor.name === "Snake"
     );
+
+    const cpuSnake = this.game.gameObjects.find(
+      (obj) => obj.constructor.name === "CPUSnake"
+    );
+
+    let isOnSnake = false;
+
     if (snake) {
-      const isOnSnake = snake.segments.some(
+      isOnSnake = snake.segments.some(
         (segment) =>
           segment.x === this.position.x && segment.y === this.position.y
       );
+    }
 
-      if (isOnSnake) {
-        this.relocate(); // try again if it spawned on the snake
-      }
+    if (!isOnSnake && cpuSnake) {
+      isOnSnake = cpuSnake.segments.some(
+        (segment) =>
+          segment.x === this.position.x && segment.y === this.position.y
+      );
+    }
+
+    if (isOnSnake) {
+      this.relocate(); // try again if it spawned on either snake
     }
   }
 

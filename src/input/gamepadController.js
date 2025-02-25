@@ -3,12 +3,19 @@ export default class GamepadController {
     this.game = game;
     this.gamepad = null;
     this.prevButtons = {};
+    this.startButtonPressed = false;
+    this.buttonCooldown = 0; // Add cooldown to prevent multiple toggles
   }
 
-  update() {
+  update(deltaTime) {
     // Get the gamepad
     const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
     this.gamepad = gamepads[0];
+
+    // Reduce cooldown if active
+    if (this.buttonCooldown > 0) {
+      this.buttonCooldown -= deltaTime;
+    }
 
     if (this.gamepad) {
       // Handle gamepad input
@@ -64,6 +71,27 @@ export default class GamepadController {
               snake.nextDirection = { x: 0, y: 1 }; // Down
             }
           }
+        }
+
+        // Start button for pause/restart
+        // Button 9 is typically the "start" button
+        if (
+          this.gamepad.buttons[9].pressed &&
+          !this.startButtonPressed &&
+          this.buttonCooldown <= 0
+        ) {
+          this.startButtonPressed = true;
+          this.buttonCooldown = 300; // 300ms cooldown to prevent multiple toggles
+
+          if (this.game.gameOver) {
+            this.game.restart();
+            console.log("Game restarted via gamepad");
+          } else {
+            this.game.paused = !this.game.paused;
+            console.log("Game paused via gamepad:", this.game.paused);
+          }
+        } else if (!this.gamepad.buttons[9].pressed) {
+          this.startButtonPressed = false;
         }
       }
     }
