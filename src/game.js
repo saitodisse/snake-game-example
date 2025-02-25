@@ -25,6 +25,13 @@ export default class Game {
     this.winningScore = 10;
     this.roundWinner = null;
     this.gameWinner = null;
+    
+    // Adicionar estados para o power-up de velocidade
+    this.playerSpeedBoost = false;
+    this.cpuSpeedBoost = false;
+    this.playerSpeedTimer = 0;
+    this.cpuSpeedTimer = 0;
+    this.speedBoostDuration = 2000; // 2 segundos em milissegundos
 
     this.init();
   }
@@ -46,7 +53,36 @@ export default class Game {
   }
 
   update(deltaTime) {
-    this.gamepadController.update(deltaTime); // Pass deltaTime to gamepadController
+    this.gamepadController.update(deltaTime);
+
+    // Atualizar os timers de velocidade
+    if (this.playerSpeedBoost) {
+      this.playerSpeedTimer += deltaTime;
+      if (this.playerSpeedTimer >= this.speedBoostDuration) {
+        this.playerSpeedBoost = false;
+        this.playerSpeedTimer = 0;
+        
+        // Resetar a velocidade do jogador
+        const snake = this.gameObjects.find(
+          (obj) => obj.constructor.name === "Snake"
+        );
+        if (snake) snake.resetSpeed();
+      }
+    }
+    
+    if (this.cpuSpeedBoost) {
+      this.cpuSpeedTimer += deltaTime;
+      if (this.cpuSpeedTimer >= this.speedBoostDuration) {
+        this.cpuSpeedBoost = false;
+        this.cpuSpeedTimer = 0;
+        
+        // Resetar a velocidade da CPU
+        const cpuSnake = this.gameObjects.find(
+          (obj) => obj.constructor.name === "CPUSnake"
+        );
+        if (cpuSnake) cpuSnake.resetSpeed();
+      }
+    }
 
     // Check for winner
     if (this.playerScore >= this.winningScore) {
@@ -162,5 +198,31 @@ export default class Game {
 
   toggleSound() {
     return this.soundManager.toggleMute();
+  }
+
+  activatePlayerSpeedBoost() {
+    this.playerSpeedBoost = true;
+    this.playerSpeedTimer = 0;
+    
+    const snake = this.gameObjects.find(
+      (obj) => obj.constructor.name === "Snake"
+    );
+    if (snake) snake.boostSpeed();
+    
+    // Tocar um som de power-up (opcional)
+    this.soundManager.play("eat");
+  }
+  
+  activateCPUSpeedBoost() {
+    this.cpuSpeedBoost = true;
+    this.cpuSpeedTimer = 0;
+    
+    const cpuSnake = this.gameObjects.find(
+      (obj) => obj.constructor.name === "CPUSnake"
+    );
+    if (cpuSnake) cpuSnake.boostSpeed();
+    
+    // Tocar um som de power-up (opcional)
+    this.soundManager.play("eat");
   }
 }

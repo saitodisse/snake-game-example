@@ -3,8 +3,10 @@ export default class CPUSnake {
     this.game = game;
     this.size = 20; // size of each segment
     this.speed = 200; // pixels per second
+    this.normalMoveInterval = 180; // slightly slower than player
+    this.fastMoveInterval = 90; // move twice as fast when boosted
+    this.moveInterval = this.normalMoveInterval;
     this.movementTimer = 0;
-    this.moveInterval = 180; // slightly slower than player
 
     // Starting with 3 segments at a different location
     this.segments = [
@@ -82,6 +84,9 @@ export default class CPUSnake {
         this.game.cpuScore++;
         this.game.soundManager.play("eat");
         food.relocate();
+        
+        // Adicionar esta linha para ativar o boost de velocidade
+        this.game.activateCPUSpeedBoost();
       } else {
         // Remove tail if no food was eaten
         this.segments.pop();
@@ -224,5 +229,15 @@ export default class CPUSnake {
       { x: 100, y: 140 },
     ];
     this.direction = { x: 0, y: -1 };
+  }
+
+  boostSpeed() {
+    this.moveInterval = this.fastMoveInterval;
+    console.log("CPU speed boosted!");
+  }
+
+  resetSpeed() {
+    this.moveInterval = this.normalMoveInterval;
+    console.log("CPU speed reset to normal");
   }
 }

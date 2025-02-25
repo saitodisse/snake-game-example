@@ -3,8 +3,10 @@ export default class Snake {
     this.game = game;
     this.size = 20; // size of each segment
     this.speed = 200; // pixels per second
+    this.normalMoveInterval = 150; // move every 150ms
+    this.fastMoveInterval = 75; // move twice as fast when boosted
+    this.moveInterval = this.normalMoveInterval;
     this.movementTimer = 0;
-    this.moveInterval = 150; // move every 150ms
 
     // Starting with 3 segments at the center
     this.segments = [
@@ -143,6 +145,7 @@ export default class Snake {
         this.game.playerScore++;
         this.game.soundManager.play("eat");
         food.relocate();
+        this.game.activatePlayerSpeedBoost();
       } else {
         // Remove tail if no food was eaten
         this.segments.pop();
@@ -182,5 +185,15 @@ export default class Snake {
     ];
     this.direction = { x: 1, y: 0 };
     this.nextDirection = { x: 1, y: 0 };
+  }
+
+  boostSpeed() {
+    this.moveInterval = this.fastMoveInterval;
+    console.log("Player speed boosted!");
+  }
+  
+  resetSpeed() {
+    this.moveInterval = this.normalMoveInterval;
+    console.log("Player speed reset to normal");
   }
 }
